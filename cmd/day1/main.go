@@ -14,12 +14,15 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
-	finalNumber := 0
+	finalNumberPart1 := 0
+	finalNumberPart2 := 0
 	scanner := bufio.NewScanner(f)
 	for scanner.Scan() {
-		finalNumber += getNumberFromLine([]rune(scanner.Text()))
+		finalNumberPart1 += getNumberFromLine([]rune(scanner.Text()), false)
+		finalNumberPart2 += getNumberFromLine([]rune(scanner.Text()), true)
 	}
-	fmt.Println(finalNumber)
+	fmt.Println("Part 1 ->", finalNumberPart1)
+	fmt.Println("Part 2 ->", finalNumberPart2)
 }
 
 func hasAnyNumberPrefix(text string) (bool, string, string) {
@@ -33,29 +36,31 @@ func hasAnyNumberPrefix(text string) (bool, string, string) {
 	return false, "", ""
 }
 
-func findNumber(text string, c rune, i int) rune {
-	textSlice := text[i:]
+func findNumber(text string, c rune, i int, wordsAreNumbers bool) rune {
 	if unicode.IsDigit(c) {
 		return c
 	}
-	result, prefix, substitute := hasAnyNumberPrefix(textSlice)
-	if result {
-		textSlice = strings.Replace(textSlice, prefix, substitute, 1)
-		return rune(textSlice[0])
+	if wordsAreNumbers {
+		textSlice := text[i:]
+		result, prefix, substitute := hasAnyNumberPrefix(textSlice)
+		if result {
+			textSlice = strings.Replace(textSlice, prefix, substitute, 1)
+			return rune(textSlice[0])
+		}
 	}
 	return 0
 }
 
-func getNumberFromLine(text []rune) int {
+func getNumberFromLine(text []rune, wordsAreNumbers bool) int {
 	var first, last rune
 	textString := string(text)
 	for i, c := range textString {
-		if first = findNumber(textString, c, i); first != 0 {
+		if first = findNumber(textString, c, i, wordsAreNumbers); first != 0 {
 			break
 		}
 	}
 	for i := len(textString) - 1; i >= 0; i-- {
-		if last = findNumber(textString, text[i], i); last != 0 {
+		if last = findNumber(textString, text[i], i, wordsAreNumbers); last != 0 {
 			break
 		}
 	}
