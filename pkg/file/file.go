@@ -10,8 +10,8 @@ type File struct {
 	scanner *bufio.Scanner
 }
 
-func Open(filePath string) File {
-	f := File{}
+func Open(filePath string) *File {
+	f := new(File)
 	filePtr, err := os.Open(filePath)
 	if err != nil {
 		panic(err)
