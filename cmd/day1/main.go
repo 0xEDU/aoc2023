@@ -9,8 +9,7 @@ import (
 )
 
 func main() {
-	f := file.File{}
-	f.Open("./cmd/day1/input")
+	f := file.Open("./cmd/day1/input")
 	finalNumberPart1 := 0
 	finalNumberPart2 := 0
 	for f.GetLine() {

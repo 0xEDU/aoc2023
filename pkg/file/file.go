@@ -10,13 +10,15 @@ type File struct {
 	scanner *bufio.Scanner
 }
 
-func (f File) Open(filePath string) {
+func Open(filePath string) File {
+	f := File{}
 	filePtr, err := os.Open(filePath)
 	if err != nil {
 		panic(err)
 	}
 	f.filePtr = filePtr
 	f.scanner = bufio.NewScanner(filePtr)
+	return f
 }
 
 func (f File) GetLine() bool {
