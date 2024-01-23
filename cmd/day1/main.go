@@ -1,28 +1,25 @@
 package main
 
 import (
-	"bufio"
+	"aoc_2023/pkg/file"
 	"fmt"
-	"os"
 	"strconv"
 	"strings"
 	"unicode"
 )
 
 func main() {
-	f, err := os.Open("./cmd/day1/input")
-	if err != nil {
-		panic(err)
-	}
+	f := file.File{}
+	f.Open("./cmd/day1/input")
 	finalNumberPart1 := 0
 	finalNumberPart2 := 0
-	scanner := bufio.NewScanner(f)
-	for scanner.Scan() {
-		finalNumberPart1 += getNumberFromLine([]rune(scanner.Text()), false)
-		finalNumberPart2 += getNumberFromLine([]rune(scanner.Text()), true)
+	for f.GetLine() {
+		finalNumberPart1 += getNumberFromLine([]rune(f.LineContent()), false)
+		finalNumberPart2 += getNumberFromLine([]rune(f.LineContent()), true)
 	}
 	fmt.Println("Part 1 ->", finalNumberPart1)
 	fmt.Println("Part 2 ->", finalNumberPart2)
+	f.Close()
 }
 
 func hasAnyNumberPrefix(text string) (bool, string, string) {
