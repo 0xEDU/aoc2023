@@ -90,7 +90,9 @@ func getSumOfValidGames(list *GameList) int {
 	validValues := []int{temp.reds[0], temp.greens[0], temp.blues[0]}
 	temp = temp.next
 	for temp != nil {
-		if sliceHasLargerValue(temp.reds, validValues[0]) || sliceHasLargerValue(temp.greens, validValues[1]) || sliceHasLargerValue(temp.blues, validValues[2]) {
+		if sliceHasLargerValue(temp.reds, validValues[0]) ||
+			sliceHasLargerValue(temp.greens, validValues[1]) ||
+			sliceHasLargerValue(temp.blues, validValues[2]) {
 			temp = temp.next
 			continue
 		}
