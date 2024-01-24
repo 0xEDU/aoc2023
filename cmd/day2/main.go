@@ -3,6 +3,7 @@ package main
 import (
 	"aoc_2023/pkg/file"
 	"fmt"
+	"sort"
 	"strconv"
 	"strings"
 	"unicode"
@@ -36,7 +37,6 @@ func getGameSetsFromSequence(sequence string) ([]int, []int, []int) {
 	var reds, greens, blues []int
 
 	splitSequence := strings.Split(sequence, ";")
-	fmt.Println(splitSequence)
 	for _, sequence := range splitSequence {
 		colors := strings.Split(sequence, ",")
 		for _, color := range colors {
@@ -51,7 +51,9 @@ func getGameSetsFromSequence(sequence string) ([]int, []int, []int) {
 			}
 		}
 	}
-	fmt.Println("Reds:", reds, "Greens:", greens, "Blues:", blues)
+	sort.Sort(sort.Reverse(sort.IntSlice(reds)))
+	sort.Sort(sort.Reverse(sort.IntSlice(greens)))
+	sort.Sort(sort.Reverse(sort.IntSlice(blues)))
 	return reds, greens, blues
 }
 
@@ -102,6 +104,17 @@ func getSumOfValidGames(list *GameList) int {
 	return sumOfValidGames
 }
 
+func getSumOfMinimumGamesPower(list *GameList) int {
+	sumOfMinimumGamesPower := 0
+	temp := (*list).head.next
+	for temp != nil {
+		power := temp.reds[0] * temp.greens[0] * temp.blues[0]
+		sumOfMinimumGamesPower += power
+		temp = temp.next
+	}
+	return sumOfMinimumGamesPower
+}
+
 func main() {
 	f := file.Open("./cmd/day2/input")
 	gameList := GameList{nil}
@@ -111,6 +124,8 @@ func main() {
 		appendGameToList(&gameList.head, &game)
 	}
 	sumOfValidGames := getSumOfValidGames(&gameList)
-	fmt.Println(sumOfValidGames)
+	fmt.Println("Part 1 ->", sumOfValidGames)
+	sumOfMinimumGamesPower := getSumOfMinimumGamesPower(&gameList)
+	fmt.Println("Part 2 ->", sumOfMinimumGamesPower)
 	f.Close()
 }
