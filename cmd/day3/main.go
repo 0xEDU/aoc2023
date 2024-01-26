@@ -74,6 +74,14 @@ func evaluateSchemeNumbers(scheme Scheme) int {
 	return sum
 }
 
+func getBrokenNumber(point Point, scheme *Scheme, brokenNumber []int) {
+	x := point.x
+	y := point.y
+	value := point.value
+	brokenNumber = append(brokenNumber, int(value))
+	(*scheme)[x][y].value = '.'
+}
+
 func floodFillPoint(point Point, scheme *Scheme, adjacentNumbers *[]int) {
 	x := point.x
 	y := point.y
@@ -82,7 +90,8 @@ func floodFillPoint(point Point, scheme *Scheme, adjacentNumbers *[]int) {
 		return
 	}
 	if unicode.IsDigit(value) {
-		(*scheme)[x][y].value = '.'
+		var brokenNumber []int
+		getBrokenNumber(point, scheme, brokenNumber)
 		return
 	}
 	floodFillPoint((*scheme)[x][y+1], scheme, adjacentNumbers)
