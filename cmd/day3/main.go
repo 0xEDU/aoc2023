@@ -3,6 +3,8 @@ package main
 import (
 	"aoc_2023/pkg/file"
 	"fmt"
+	"math"
+	"strconv"
 	"unicode"
 )
 
@@ -74,14 +76,6 @@ func evaluateSchemeNumbers(scheme Scheme) int {
 	return sum
 }
 
-func getBrokenNumber(point Point, scheme *Scheme, brokenNumber []int) {
-	x := point.x
-	y := point.y
-	value := point.value
-	brokenNumber = append(brokenNumber, int(value))
-	(*scheme)[x][y].value = '.'
-}
-
 func floodFillPoint(point Point, scheme *Scheme, adjacentNumbers *[]int) {
 	x := point.x
 	y := point.y
@@ -89,9 +83,47 @@ func floodFillPoint(point Point, scheme *Scheme, adjacentNumbers *[]int) {
 	if value == '.' {
 		return
 	}
+	// Go left and right
+	// (value * (10 ^ number count))
 	if unicode.IsDigit(value) {
-		var brokenNumber []int
-		getBrokenNumber(point, scheme, brokenNumber)
+		numberValue, _ := strconv.Atoi(string(value))
+		k := 0
+		for {
+			if y+k > len((*scheme)[0]) {
+				break
+			}
+			if unicode.IsDigit((*scheme)[x][y+k].value) {
+				exponent := k - 1
+				if k == 0 {
+					exponent = k - 1
+				}
+				farNumber, _ := strconv.Atoi(string((*scheme)[x][y+k].value))
+				*adjacentNumbers = append(*adjacentNumbers, farNumber*int(math.Pow(10, float64(exponent))))
+			}
+			if !unicode.IsDigit((*scheme)[x][y+k].value) {
+				(*scheme)[x][y].value = '.'
+				break
+			}
+			k++
+		}
+		l := 1
+		for {
+			if y-l < 0 {
+				break
+			}
+			if unicode.IsDigit((*scheme)[x][y-l].value) {
+				farNumber, _ := strconv.Atoi(string((*scheme)[x][y-l].value))
+				*adjacentNumbers = append(*adjacentNumbers, farNumber*int(math.Pow(10, float64(k+l-1))))
+				if !unicode.IsDigit((*scheme)[x][y-l].value) {
+					break
+				}
+				(*scheme)[x][y-l].value = '.'
+			}
+			l++
+		}
+		*adjacentNumbers = append(*adjacentNumbers, numberValue*int(math.Pow(10, float64(k-1))))
+		fmt.Println("POSITION", x, y)
+		fmt.Println(adjacentNumbers)
 		return
 	}
 	floodFillPoint((*scheme)[x][y+1], scheme, adjacentNumbers)
