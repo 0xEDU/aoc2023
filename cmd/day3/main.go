@@ -76,8 +76,8 @@ func floodFillPoint(x, y int, scheme *Scheme, adjacentNumbers *[]int) {
 	if value == '.' {
 		return
 	}
-	// Go left and right
-	// (value * (10 ^ number count))
+	// Go right, then left
+	// (value * (10 ^ exponent))
 	if unicode.IsDigit(value) {
 		var tempSlice []int
 		k := 0
