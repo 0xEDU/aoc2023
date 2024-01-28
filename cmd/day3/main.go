@@ -34,7 +34,7 @@ func main() {
 // Load scheme into memory
 func loadScheme() Scheme {
 	var scheme Scheme
-	f := file.Open("./cmd/day3/smol")
+	f := file.Open("./cmd/day3/input")
 	linePosition := 0
 
 	for f.GetLine() {
@@ -64,7 +64,7 @@ func evaluateSchemeNumbers(scheme Scheme) int {
 		for _, point := range schemeLine {
 			if point.value != '.' && !unicode.IsDigit(point.value) {
 				var adjacentNumbers []int
-				floodFillPoint(point, &scheme, &adjacentNumbers)
+				floodFillPoint(point.x, point.y, &scheme, &adjacentNumbers)
 				for _, number := range adjacentNumbers {
 					sum += number
 				}
@@ -76,33 +76,48 @@ func evaluateSchemeNumbers(scheme Scheme) int {
 	return sum
 }
 
-func floodFillPoint(point Point, scheme *Scheme, adjacentNumbers *[]int) {
-	x := point.x
-	y := point.y
+func floodFillPoint(x, y int, scheme *Scheme, adjacentNumbers *[]int) {
+	if x >= len(*scheme) || x < 0 || y >= len((*scheme)[0]) || y < 0 {
+		return
+	}
+	point := (*scheme)[x][y]
 	value := point.value
 	if value == '.' {
 		return
 	}
 	// Go left and right
 	// (value * (10 ^ number count))
+	if x == 120 && y == 35 {
+		fmt.Println("dale")
+	}
 	if unicode.IsDigit(value) {
-		numberValue, _ := strconv.Atoi(string(value))
 		k := 0
 		for {
-			if y+k > len((*scheme)[0]) {
+			if y+k >= len((*scheme)[0]) {
+				break
+			}
+			if !unicode.IsDigit((*scheme)[x][y+k].value) {
 				break
 			}
 			if unicode.IsDigit((*scheme)[x][y+k].value) {
-				exponent := k - 1
-				if k == 0 {
-					exponent = k - 1
+				j := 0
+			INNER:
+				for {
+					if y+k+j >= len((*scheme)[0]) {
+						break INNER
+					}
+					if !unicode.IsDigit((*scheme)[x][y+k+j].value) {
+						break INNER
+					}
+					j++
+				}
+				exponent := j - 1
+				if j == 0 {
+					exponent = j
 				}
 				farNumber, _ := strconv.Atoi(string((*scheme)[x][y+k].value))
 				*adjacentNumbers = append(*adjacentNumbers, farNumber*int(math.Pow(10, float64(exponent))))
-			}
-			if !unicode.IsDigit((*scheme)[x][y+k].value) {
-				(*scheme)[x][y].value = '.'
-				break
+				(*scheme)[x][y+k].value = '.'
 			}
 			k++
 		}
@@ -111,31 +126,30 @@ func floodFillPoint(point Point, scheme *Scheme, adjacentNumbers *[]int) {
 			if y-l < 0 {
 				break
 			}
+			if !unicode.IsDigit((*scheme)[x][y-l].value) {
+				break
+			}
 			if unicode.IsDigit((*scheme)[x][y-l].value) {
 				farNumber, _ := strconv.Atoi(string((*scheme)[x][y-l].value))
 				*adjacentNumbers = append(*adjacentNumbers, farNumber*int(math.Pow(10, float64(k+l-1))))
-				if !unicode.IsDigit((*scheme)[x][y-l].value) {
-					break
-				}
 				(*scheme)[x][y-l].value = '.'
 			}
 			l++
 		}
-		*adjacentNumbers = append(*adjacentNumbers, numberValue*int(math.Pow(10, float64(k-1))))
-		fmt.Println("POSITION", x, y)
 		fmt.Println(adjacentNumbers)
 		return
 	}
-	floodFillPoint((*scheme)[x][y+1], scheme, adjacentNumbers)
-	floodFillPoint((*scheme)[x+1][y+1], scheme, adjacentNumbers)
-	floodFillPoint((*scheme)[x-1][y+1], scheme, adjacentNumbers)
-	floodFillPoint((*scheme)[x][y-1], scheme, adjacentNumbers)
-	floodFillPoint((*scheme)[x+1][y-1], scheme, adjacentNumbers)
-	floodFillPoint((*scheme)[x-1][y-1], scheme, adjacentNumbers)
-	floodFillPoint((*scheme)[x+1][y], scheme, adjacentNumbers)
-	floodFillPoint((*scheme)[x+1][y+1], scheme, adjacentNumbers)
-	floodFillPoint((*scheme)[x+1][y-1], scheme, adjacentNumbers)
-	floodFillPoint((*scheme)[x-1][y], scheme, adjacentNumbers)
-	floodFillPoint((*scheme)[x-1][y+1], scheme, adjacentNumbers)
-	floodFillPoint((*scheme)[x-1][y-1], scheme, adjacentNumbers)
+	fmt.Printf("Evaluating position (%d,%d) with value '%s'\n", x+1, y+1, string(value))
+	floodFillPoint(x, y+1, scheme, adjacentNumbers)
+	floodFillPoint(x+1, y+1, scheme, adjacentNumbers)
+	floodFillPoint(x-1, y+1, scheme, adjacentNumbers)
+	floodFillPoint(x, y-1, scheme, adjacentNumbers)
+	floodFillPoint(x+1, y-1, scheme, adjacentNumbers)
+	floodFillPoint(x-1, y-1, scheme, adjacentNumbers)
+	floodFillPoint(x+1, y, scheme, adjacentNumbers)
+	floodFillPoint(x+1, y+1, scheme, adjacentNumbers)
+	floodFillPoint(x+1, y-1, scheme, adjacentNumbers)
+	floodFillPoint(x-1, y, scheme, adjacentNumbers)
+	floodFillPoint(x-1, y+1, scheme, adjacentNumbers)
+	floodFillPoint(x-1, y-1, scheme, adjacentNumbers)
 }
