@@ -16,19 +16,11 @@ type Point struct {
 type SchemeLine []Point
 type Scheme [][]Point
 
-func printScheme(scheme Scheme) {
-	for _, schemeLine := range scheme {
-		for _, point := range schemeLine {
-			fmt.Printf("%c", point.value)
-		}
-		fmt.Println()
-	}
-}
-
 func main() {
 	scheme := loadScheme()
-	result := evaluateSchemeNumbers(scheme)
-	fmt.Println(result)
+	result1, result2 := evaluateSchemeNumbers(scheme)
+	fmt.Println("Part 1 ->", result1)
+	fmt.Println("Part 2 ->", result2)
 }
 
 // Load scheme into memory
@@ -55,11 +47,9 @@ func stringToSchemeLine(str string, linePosition int) SchemeLine {
 }
 
 // Operate on scheme to get the final result
-func evaluateSchemeNumbers(scheme Scheme) int {
-	fmt.Println("BEFORE:")
-	printScheme(scheme)
-	fmt.Println()
+func evaluateSchemeNumbers(scheme Scheme) (int, int) {
 	sum := 0
+	ratio := 0
 	for _, schemeLine := range scheme {
 		for _, point := range schemeLine {
 			if point.value != '.' && !unicode.IsDigit(point.value) {
@@ -68,12 +58,13 @@ func evaluateSchemeNumbers(scheme Scheme) int {
 				for _, number := range adjacentNumbers {
 					sum += number
 				}
+				if len(adjacentNumbers) == 2 {
+					ratio += adjacentNumbers[0] * adjacentNumbers[1]
+				}
 			}
 		}
 	}
-	fmt.Println("AFTER:")
-	printScheme(scheme)
-	return sum
+	return sum, ratio
 }
 
 func floodFillPoint(x, y int, scheme *Scheme, adjacentNumbers *[]int) {
@@ -87,10 +78,8 @@ func floodFillPoint(x, y int, scheme *Scheme, adjacentNumbers *[]int) {
 	}
 	// Go left and right
 	// (value * (10 ^ number count))
-	if x == 120 && y == 35 {
-		fmt.Println("dale")
-	}
 	if unicode.IsDigit(value) {
+		var tempSlice []int
 		k := 0
 		for {
 			if y+k >= len((*scheme)[0]) {
@@ -116,7 +105,7 @@ func floodFillPoint(x, y int, scheme *Scheme, adjacentNumbers *[]int) {
 					exponent = j
 				}
 				farNumber, _ := strconv.Atoi(string((*scheme)[x][y+k].value))
-				*adjacentNumbers = append(*adjacentNumbers, farNumber*int(math.Pow(10, float64(exponent))))
+				tempSlice = append(tempSlice, farNumber*int(math.Pow(10, float64(exponent))))
 				(*scheme)[x][y+k].value = '.'
 			}
 			k++
@@ -131,15 +120,18 @@ func floodFillPoint(x, y int, scheme *Scheme, adjacentNumbers *[]int) {
 			}
 			if unicode.IsDigit((*scheme)[x][y-l].value) {
 				farNumber, _ := strconv.Atoi(string((*scheme)[x][y-l].value))
-				*adjacentNumbers = append(*adjacentNumbers, farNumber*int(math.Pow(10, float64(k+l-1))))
+				tempSlice = append(tempSlice, farNumber*int(math.Pow(10, float64(k+l-1))))
 				(*scheme)[x][y-l].value = '.'
 			}
 			l++
 		}
-		fmt.Println(adjacentNumbers)
+		adjacentNumber := 0
+		for _, number := range tempSlice {
+			adjacentNumber += number
+		}
+		*adjacentNumbers = append(*adjacentNumbers, adjacentNumber)
 		return
 	}
-	fmt.Printf("Evaluating position (%d,%d) with value '%s'\n", x+1, y+1, string(value))
 	floodFillPoint(x, y+1, scheme, adjacentNumbers)
 	floodFillPoint(x+1, y+1, scheme, adjacentNumbers)
 	floodFillPoint(x-1, y+1, scheme, adjacentNumbers)
