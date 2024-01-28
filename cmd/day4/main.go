@@ -41,7 +41,6 @@ func numberLineToIntSlice(numberLine string) []int {
 
 	numberLine = strings.Trim(numberLine, " ")
 	splitNumberLine := strings.Split(numberLine, " ")
-	fmt.Println(numberLine)
 	for _, numberString := range splitNumberLine {
 		if numberString == "" {
 			continue
@@ -49,7 +48,6 @@ func numberLineToIntSlice(numberLine string) []int {
 		number, _ := strconv.Atoi(numberString)
 		numbers = append(numbers, number)
 	}
-	fmt.Println(numbers)
 	return numbers
 }
 
