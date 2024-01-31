@@ -2,31 +2,48 @@ package main
 
 import (
 	"aoc_2023/pkg/file"
+	"aoc_2023/pkg/utils"
 	"fmt"
 	"math"
 	"strconv"
 	"strings"
 )
 
-func prettyPrint(cards []string) {
-	for _, card := range cards {
-		fmt.Println(card)
+func prettyPrint(cards CardDeck) {
+	for i, cardLine := range cards {
+		fmt.Printf("Line %d [", i)
+		for _, card := range cardLine {
+			fmt.Printf("Card %d: %d matches", card.id, card.matches)
+		}
+		fmt.Printf("]")
+		fmt.Println()
 	}
 }
 
+type Card struct {
+	id      int
+	matches int
+}
+
+type CardLine []Card
+type CardDeck []CardLine
+
 func main() {
-	f := file.Open("./cmd/day4/smol")
+	f := file.Open("./smol")
 	points := 0
-	var cards []string
+	var cards CardDeck
 	for f.GetLine() {
-		cards = append(cards, f.LineContent())
+		var cardLine CardLine
+		card := createCard(f.LineContent())
+		cardLine = append(cardLine, card)
+		cards = append(cards, cardLine)
 		points += getCardPoints(f.LineContent())
 	}
-	for i, card := range cards {
-		matches := getCardMatches(card)
-		for j := i+1; j < matches; j++ {
-			fmt.Println(cards[j])
-			// cards = insert(cards, j, cards[j])
+	for i, cardLine := range cards {
+		for _, card := range cardLine {
+			// for j := 0; j < i; j++ {
+			// 	cardLine = append(cardLine, )
+			// }
 		}
 	}
 	prettyPrint(cards)
@@ -34,14 +51,15 @@ func main() {
 	f.Close()
 }
 
-func insert(cards []string, position int, newCard string) []string {
-	if position == len(cards) {
-		cards = append(cards, newCard)
-		return cards
-	}
-	cards = append(cards[:position+1], cards[position:]...)
-	cards[position] = newCard
-	return cards
+func createCard(cardString string) Card {
+	card := Card{id: getCardId(cardString), matches: getCardMatches(cardString)}
+	return card
+}
+
+func getCardId(cardLine string) int {
+	splitCardLine := strings.Split(cardLine, ":")
+	id := utils.ExtractNumberFromString(splitCardLine[0])
+	return id
 }
 
 func getCardMatches(cardLine string) int {
