@@ -8,17 +8,43 @@ import (
 	"strings"
 )
 
+func prettyPrint(cards []string) {
+	for _, card := range cards {
+		fmt.Println(card)
+	}
+}
+
 func main() {
-	f := file.Open("./cmd/day4/input")
+	f := file.Open("./cmd/day4/smol")
 	points := 0
+	var cards []string
 	for f.GetLine() {
+		cards = append(cards, f.LineContent())
 		points += getCardPoints(f.LineContent())
 	}
-	fmt.Println("Result ->", points)
+	for i, card := range cards {
+		matches := getCardMatches(card)
+		for j := i+1; j < matches; j++ {
+			fmt.Println(cards[j])
+			// cards = insert(cards, j, cards[j])
+		}
+	}
+	prettyPrint(cards)
+	fmt.Println("Result Part 1 ->", points)
 	f.Close()
 }
 
-func getCardPoints(cardLine string) int {
+func insert(cards []string, position int, newCard string) []string {
+	if position == len(cards) {
+		cards = append(cards, newCard)
+		return cards
+	}
+	cards = append(cards[:position+1], cards[position:]...)
+	cards[position] = newCard
+	return cards
+}
+
+func getCardMatches(cardLine string) int {
 	splitCardLine := strings.Split(cardLine, ":")
 	numbers := splitCardLine[1]
 	splitNumbers := strings.Split(numbers, "|")
@@ -32,6 +58,11 @@ func getCardPoints(cardLine string) int {
 			}
 		}
 	}
+	return counter
+}
+
+func getCardPoints(cardLine string) int {
+	counter := getCardMatches(cardLine)
 	points := calculatePoints(counter)
 	return points
 }
