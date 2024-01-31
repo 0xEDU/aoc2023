@@ -2,11 +2,10 @@ package main
 
 import (
 	"aoc_2023/pkg/file"
+	"aoc_2023/pkg/utils"
 	"fmt"
 	"sort"
-	"strconv"
 	"strings"
-	"unicode"
 )
 
 type Game struct {
@@ -21,18 +20,6 @@ type GameList struct {
 	head *Game
 }
 
-func extractNumberFromString(str string) int {
-	var builder strings.Builder
-
-	for _, c := range str {
-		if unicode.IsDigit(c) {
-			builder.WriteRune(c)
-		}
-	}
-	result, _ := strconv.Atoi(builder.String())
-	return result
-}
-
 func getGameSetsFromSequence(sequence string) ([]int, []int, []int) {
 	var reds, greens, blues []int
 
@@ -41,13 +28,13 @@ func getGameSetsFromSequence(sequence string) ([]int, []int, []int) {
 		colors := strings.Split(sequence, ",")
 		for _, color := range colors {
 			if strings.Contains(color, "red") {
-				reds = append(reds, extractNumberFromString(color))
+				reds = append(reds, utils.ExtractNumberFromString(color))
 			}
 			if strings.Contains(color, "green") {
-				greens = append(greens, extractNumberFromString(color))
+				greens = append(greens, utils.ExtractNumberFromString(color))
 			}
 			if strings.Contains(color, "blue") {
-				blues = append(blues, extractNumberFromString(color))
+				blues = append(blues, utils.ExtractNumberFromString(color))
 			}
 		}
 	}
@@ -63,7 +50,7 @@ func makeGameFromLine(line string) *Game {
 	splitString := strings.Split(line, ":")
 	gameIdString := splitString[0]
 	gameSetsSequence := splitString[1]
-	game.id = extractNumberFromString(gameIdString)
+	game.id = utils.ExtractNumberFromString(gameIdString)
 	game.reds, game.greens, game.blues = getGameSetsFromSequence(gameSetsSequence)
 	game.next = nil
 	return game
