@@ -13,7 +13,7 @@ func prettyPrint(cards CardDeck) {
 	for i, cardLine := range cards {
 		fmt.Printf("Line %d [", i)
 		for _, card := range cardLine {
-			fmt.Printf("Card %d: %d matches", card.id, card.matches)
+			fmt.Printf("Card %d: %d matches | ", card.id, card.matches)
 		}
 		fmt.Printf("]")
 		fmt.Println()
@@ -29,7 +29,7 @@ type CardLine []Card
 type CardDeck []CardLine
 
 func main() {
-	f := file.Open("./smol")
+	f := file.Open("./cmd/day4/smol")
 	points := 0
 	var cards CardDeck
 	for f.GetLine() {
@@ -41,9 +41,9 @@ func main() {
 	}
 	for i, cardLine := range cards {
 		for _, card := range cardLine {
-			// for j := 0; j < i; j++ {
-			// 	cardLine = append(cardLine, )
-			// }
+			for j := 0; j < card.matches; j++ {
+				cards[i+1] = append(cards[i+1], cards[j][0]) // Need to figure this out
+			}
 		}
 	}
 	prettyPrint(cards)
