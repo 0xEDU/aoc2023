@@ -9,16 +9,16 @@ import (
 	"strings"
 )
 
-func prettyPrint(cards CardDeck) {
-	for i, cardLine := range cards {
-		fmt.Printf("Line %d [", i)
-		for _, card := range cardLine {
-			fmt.Printf("Card %d: %d matches | ", card.id, card.matches)
-		}
-		fmt.Printf("]")
-		fmt.Println()
-	}
-}
+//func prettyPrint(cards CardDeck) {
+//	for i, cardLine := range cards {
+//		fmt.Printf("Line %d [", i)
+//		for _, card := range cardLine {
+//			fmt.Printf("Card %d: %d matches | ", card.id, card.matches)
+//		}
+//		fmt.Printf("]")
+//		fmt.Println()
+//	}
+//}
 
 type Card struct {
 	id      int
@@ -29,8 +29,9 @@ type CardLine []Card
 type CardDeck []CardLine
 
 func main() {
-	f := file.Open("./cmd/day4/smol")
+	f := file.Open("./cmd/day4/input")
 	points := 0
+	numOfCards := 0
 	var cards CardDeck
 	for f.GetLine() {
 		var cardLine CardLine
@@ -41,13 +42,19 @@ func main() {
 	}
 	for i, cardLine := range cards {
 		for _, card := range cardLine {
-			for j := 0; j < card.matches; j++ {
-				cards[i+1] = append(cards[i+1], cards[j][0]) // Need to figure this out
+			for j := 1; j <= card.matches; j++ {
+				copyCard := cards[i+j][0]
+				cards[i+j] = append(cards[i+j], copyCard)
 			}
 		}
 	}
-	prettyPrint(cards)
+	for _, cardLine := range cards {
+		for range cardLine {
+			numOfCards++
+		}
+	}
 	fmt.Println("Result Part 1 ->", points)
+	fmt.Println("Result Part 2 ->", numOfCards)
 	f.Close()
 }
 
