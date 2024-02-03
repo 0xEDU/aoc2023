@@ -5,7 +5,6 @@ import (
 	"aoc_2023/pkg/utils"
 	"fmt"
 	"math"
-	"strconv"
 	"strings"
 )
 
@@ -62,8 +61,8 @@ func getCardMatches(cardLine string) int {
 	splitCardLine := strings.Split(cardLine, ":")
 	numbers := splitCardLine[1]
 	splitNumbers := strings.Split(numbers, "|")
-	winningNumbers := numberLineToIntSlice(splitNumbers[0])
-	foundNumbers := numberLineToIntSlice(splitNumbers[1])
+	winningNumbers := utils.NumberLineToIntSlice(splitNumbers[0])
+	foundNumbers := utils.NumberLineToIntSlice(splitNumbers[1])
 	counter := 0
 	for _, winningNumber := range winningNumbers {
 		for _, foundNumber := range foundNumbers {
@@ -79,21 +78,6 @@ func getCardPoints(cardLine string) int {
 	counter := getCardMatches(cardLine)
 	points := calculatePoints(counter)
 	return points
-}
-
-func numberLineToIntSlice(numberLine string) []int {
-	var numbers []int
-
-	numberLine = strings.Trim(numberLine, " ")
-	splitNumberLine := strings.Split(numberLine, " ")
-	for _, numberString := range splitNumberLine {
-		if numberString == "" {
-			continue
-		}
-		number, _ := strconv.Atoi(numberString)
-		numbers = append(numbers, number)
-	}
-	return numbers
 }
 
 func calculatePoints(counter int) int {
