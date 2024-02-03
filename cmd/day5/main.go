@@ -32,10 +32,11 @@ type Seed struct {
 }
 
 type Seeds []Seed
+type Range []int
 
 func main() {
 	var seeds Seeds
-	f := file.Open("./cmd/day5/smol")
+	f := file.Open("./cmd/day5/input")
 	i := 0
 	for f.GetLine() {
 		line := f.LineContent()
@@ -118,9 +119,9 @@ func mapFields(seeds *Seeds, line string, dstField, srcField string) {
 	expandedRange := expandRange(nums)
 	for j := 0; j < len(*seeds); j++ {
 		fields := getFields(seeds, j)
-		contain, position := contains(expandedRange[1], *fields[srcField])
+		contain, position := isInRange(expandedRange[1], *fields[srcField])
 		if contain {
-			*fields[dstField] = expandedRange[0][position]
+			*fields[dstField] = expandedRange[0][0] + position
 		}
 	}
 }
@@ -141,28 +142,18 @@ func prettyPrint(seeds Seeds) {
 	}
 }
 
-func contains(s []int, e int) (bool, int) {
-	for i, a := range s {
-		if a == e {
-			return true, i
-		}
+func isInRange(s Range, e int) (bool, int) {
+	if s[0] <= e && e < s[1] {
+		return true, e - s[0]
 	}
 	return false, -1
 }
 
-func expandRange(nums []int) [][]int {
-	var expandedRange [][]int
+func expandRange(nums []int) [2]Range {
 	rangeLen := nums[2]
-	var dstExpanded []int
-	for i := 0; i < rangeLen; i++ {
-		dstExpanded = append(dstExpanded, nums[0]+i)
-	}
-	var srcExpanded []int
-	for i := 0; i < rangeLen; i++ {
-		srcExpanded = append(srcExpanded, nums[1]+i)
-	}
-	expandedRange = append(expandedRange, dstExpanded)
-	expandedRange = append(expandedRange, srcExpanded)
+	dstExpanded := []int{nums[0], nums[0]+rangeLen}
+	srcExpanded := []int{nums[1], nums[1]+rangeLen}
+	expandedRange := [2]Range{dstExpanded, srcExpanded}
 	return expandedRange
 }
 
