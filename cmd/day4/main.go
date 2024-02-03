@@ -9,17 +9,6 @@ import (
 	"strings"
 )
 
-//func prettyPrint(cards CardDeck) {
-//	for i, cardLine := range cards {
-//		fmt.Printf("Line %d [", i)
-//		for _, card := range cardLine {
-//			fmt.Printf("Card %d: %d matches | ", card.id, card.matches)
-//		}
-//		fmt.Printf("]")
-//		fmt.Println()
-//	}
-//}
-
 type Card struct {
 	id      int
 	matches int
